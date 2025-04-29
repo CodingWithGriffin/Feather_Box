@@ -17,7 +17,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="space-y-5 text-white">
             <h1 className="h1">A solution to manage and store your files</h1>
             <p className="body-1">
-              Here you can store and share all your documents with others.
+              Here you can store and share all your documents with others on cloud.
             </p>
           </div>
           <Image
