@@ -54,6 +54,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
               gridType="circle"
               radialLines={false}
               stroke="none"
+              className="polar-grid"
               polarRadius={[86, 74]}
             />
             <RadialBar dataKey="value" background cornerRadius={10} />
