@@ -29,7 +29,15 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const Chart = ({ used = 0 }: { used: number }) => {
-  const chartData = [{ storage: "used", 10: used, fill: "white" }];
+  const percentage = Number(calculatePercentage(used));
+
+  const safePercentage = Number.isFinite(percentage)
+    ? Math.min(Math.max(percentage, 0), 100)
+    : 0;
+
+  const chartData = [
+    { name: "used", value: safePercentage, fill: "white" },
+  ];
 
   return (
     <Card className="chart">
@@ -38,7 +46,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
           <RadialBarChart
             data={chartData}
             startAngle={90}
-            endAngle={Number(calculatePercentage(used)) + 90}
+            endAngle={safePercentage + 90}
             innerRadius={80}
             outerRadius={110}
           >
@@ -46,53 +54,42 @@ export const Chart = ({ used = 0 }: { used: number }) => {
               gridType="circle"
               radialLines={false}
               stroke="none"
-              className="polar-grid"
               polarRadius={[86, 74]}
             />
-            <RadialBar dataKey="storage" background cornerRadius={10} />
+            <RadialBar dataKey="value" background cornerRadius={10} />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
+                content={({ viewBox }) =>
+                  viewBox && "cx" in viewBox && "cy" in viewBox ? (
+                    <text
+                      x={viewBox.cx}
+                      y={viewBox.cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      <tspan className="chart-total-percentage">
+                        {safePercentage}%
+                      </tspan>
+                      <tspan
                         x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
+                        y={(viewBox.cy ?? 0) + 24}
+                        className="fill-white/70"
                       >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="chart-total-percentage"
-                        >
-                          {used && calculatePercentage(used)
-                            ? calculatePercentage(used)
-                                .toString()
-                                .replace(/^0+/, "")
-                            : "0"}
-                          %
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-white/70"
-                        >
-                          Space used
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
+                        Space used
+                      </tspan>
+                    </text>
+                  ) : null
+                }
               />
             </PolarRadiusAxis>
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
+
       <CardHeader className="chart-details">
         <CardTitle className="chart-title">Available Storage</CardTitle>
         <CardDescription className="chart-description">
-          {used ? convertFileSize(used) : "2GB"} / 2GB
+          {convertFileSize(used)} / 2GB
         </CardDescription>
       </CardHeader>
     </Card>
