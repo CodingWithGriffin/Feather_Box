@@ -57,7 +57,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
               className="polar-grid"
               polarRadius={[86, 74]}
             />
-            <RadialBar dataKey="value" background cornerRadius={10} />
+            <RadialBar dataKey="value" cornerRadius={10} fill="white" background={{ fill: "rgba(255,255,255,0.2)" }} />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) =>
